@@ -4,7 +4,9 @@
 #include <math.h>
 
 #define NUMBER_STEP_ONCE_CYCLE 600    // Dộng cơ bước NEMA 17 có thông số 200 bước/vòng
-#define SERVO_PIN 9
+#define SERVO_PIN 12
+#define VALVE_PIN 11
+#define SUCKING_MOTOR_PIN 13
 
 
 // Define the stepper motors and the pins the will use
@@ -25,6 +27,7 @@ int stepper1Position, stepper2Position;
 String content = "";
 int data[5];
 
+void startSetup();
 void resetPosition();
 void caculateRotationAngle(float x, float y);
 void readDataFromUart();
@@ -34,31 +37,11 @@ void dropChessPieces();
 void controlServo(uint8_t uiAngle);
 
 void setup() {
-  Serial.begin(9600);
-
-  // Stepper motors max speed
-  stepper1.setMaxSpeed(4000);
-  stepper1.setAcceleration(2000);
-  stepper2.setMaxSpeed(4000);
-  stepper2.setAcceleration(2000);
-
-  stepper1.setSpeed(100);
-  stepper2.setSpeed(100);
-  stepper1.setAcceleration(100);
-  stepper2.setAcceleration(100);
-
-  myservo.attach(SERVO_PIN);  // attaches the servo on pin 9 to the servo object
-  // gripperServo.attach(A0, 600, 2500);
-  // // initial servo value - open gripper
-  // data[6] = 180;
-  // gripperServo.write(data[6]);
-  // delay(1000);
-  // data[5] = 100;
-  // resetPosition();
+  startSetup();
+  myservo.attach(SERVO_PIN);
 }
 
 void loop() {
-
   // Read data
   readDataFromUart();
 
@@ -93,6 +76,30 @@ void loop() {
 
 }
 
+void startSetup()
+{
+  // Setup baudrate for UART
+  Serial.begin(9600);
+
+  // Start step motor 1
+  stepper1.setMaxSpeed(4000);
+  stepper1.setAcceleration(2000);
+  stepper1.setSpeed(100);
+  stepper1.setAcceleration(100);
+
+  // Start step motor 2
+  stepper2.setMaxSpeed(4000);
+  stepper2.setAcceleration(2000);
+  stepper2.setSpeed(100);
+  stepper2.setAcceleration(100);
+
+  // Setup pin output for sucking motor
+  pinMode(SUCKING_MOTOR_PIN, OUTPUT);
+
+  // Setup pin output for valve
+  pinMode(VALVE_PIN, OUTPUT);
+}
+
 void resetPosition() {
   stepper1.moveTo(0);
   stepper2.moveTo(0);
@@ -101,19 +108,6 @@ void resetPosition() {
     stepper1.run();
     stepper2.run();
   }
-
-  // Homing Stepper1
-  // while (digitalRead(limitSwitch1) != 1) {
-  //   stepper1.setSpeed(-1200);
-  //   stepper1.runSpeed();
-  //   stepper1.setCurrentPosition(-3955); // When limit switch pressed set position to 0 steps
-  // }
-  // delay(20);
-  // stepper1.moveTo(0);
-  // while (stepper1.currentPosition() != 0) {
-  //   stepper1.run();
-  // }
-
 }
 
 void caculateRotationAngle(float x, float y) {
@@ -195,7 +189,9 @@ void takeChessPieces()
   controlServo(180);
   
   // Bắt đầu hút quần cờ, bật máy hút
-  delay(1000); 
+  digitalWrite(SUCKING_MOTOR_PIN, HIGH);
+  delay(500); 
+  digitalWrite(SUCKING_MOTOR_PIN, LOW); 
 
   // Nhắc ống hút + quân cờ
   controlServo(0);
@@ -206,17 +202,19 @@ void dropChessPieces()
   // Thả ông hút xuống
   controlServo(180);
   
-  // Bắt đầu thả quần cờ, tắt máy hút
+  // Bắt đầu thả quần cờ, bật van
+  digitalWrite(VALVE_PIN, HIGH); 
   delay(1000); 
 
-  // Nhắc ống hút lên
+    // Nhắc ống hút lên
   controlServo(0);
+
+  // Bắt đầu tắt van
+  digitalWrite(VALVE_PIN, LOW); 
 }
 
 void controlServo(uint8_t uiAngle)
 {
-  myservo.attach(SERVO_PIN);
   myservo.write(uiAngle);
-  delay(500); 
-  myservo.detach();
+  delay(1000); 
 }
