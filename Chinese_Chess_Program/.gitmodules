@@ -1,0 +1,3 @@
+[submodule "godogpaw"]
+	path = godogpaw
+	url = https://github.com/hmgle/godogpaw

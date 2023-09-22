@@ -1,0 +1,6 @@
+.DS_Store
+*.pyc
+__pycache__
+result*
+cpu_profile
+godogpaw.log.*
