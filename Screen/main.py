@@ -1,7 +1,7 @@
 import screen
 
 def main():
-    screen.Start()
+    screen.main()
 
 if __name__ == '__main__':
     main()
