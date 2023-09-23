@@ -7,7 +7,9 @@
 #define SERVO_PIN 12
 #define VALVE_PIN 11
 #define SUCKING_MOTOR_PIN 13
-
+#define LIMIT_SWITCH_X  10
+#define LIMIT_SWITCH_Y  9
+#define LIMIT_SWITCH_PRESS 1
 
 // Define the stepper motors and the pins the will use
 AccelStepper stepper1(1, 2, 5); // (Type:driver, STEP, DIR)
@@ -38,7 +40,6 @@ void controlServo(uint8_t uiAngle);
 
 void setup() {
   startSetup();
-  myservo.attach(SERVO_PIN);
 }
 
 void loop() {
@@ -69,7 +70,8 @@ void loop() {
 
     // Drop the chess pieces
     Serial.println("Step5: Move to start position");
-    moveMotor(0, 0);
+    resetPosition();
+    // moveMotor(0, 0);
 
     bControlMotor = false;
   }
@@ -93,19 +95,46 @@ void startSetup()
   stepper2.setSpeed(100);
   stepper2.setAcceleration(100);
 
+  // Start servo motor
+  myservo.attach(SERVO_PIN);
+
   // Setup pin output for sucking motor
   pinMode(SUCKING_MOTOR_PIN, OUTPUT);
 
   // Setup pin output for valve
   pinMode(VALVE_PIN, OUTPUT);
+
+  // Setup pinout for switch limit
+  pinMode(LIMIT_SWITCH_X, INPUT_PULLUP);
+  pinMode(LIMIT_SWITCH_Y, INPUT_PULLUP);
+
+  resetPosition();
 }
 
 void resetPosition() {
-  stepper1.moveTo(0);
-  stepper2.moveTo(0);
+  // Homing step motor X
+  while (digitalRead(LIMIT_SWITCH_X) != LIMIT_SWITCH_PRESS) {
+    stepper1.setSpeed(200);
+    stepper1.runSpeed();
+    stepper1.setCurrentPosition(-5420); // When limit switch pressed set position to 0 steps
+  }
+  delay(20);
 
-  while (stepper1.currentPosition() != stepper1Position || stepper2.currentPosition() ) {
+  stepper1.moveTo(0);
+  while (stepper1.currentPosition() != 0) {
     stepper1.run();
+  }
+
+  // Homing step motor Y
+  while (digitalRead(LIMIT_SWITCH_Y) != LIMIT_SWITCH_PRESS) {
+    stepper2.setSpeed(-1300);
+    stepper2.runSpeed();
+    stepper2.setCurrentPosition(-5420); // When limit switch pressed set position to 0 steps
+  }
+  delay(20);
+
+  stepper2.moveTo(0);
+  while (stepper2.currentPosition() != 0) {
     stepper2.run();
   }
 }
@@ -209,8 +238,9 @@ void dropChessPieces()
     // Nhắc ống hút lên
   controlServo(0);
 
-  // Bắt đầu tắt van
+  // Bắt đầu thả tắt van
   digitalWrite(VALVE_PIN, LOW); 
+  // controlServo(0);
 }
 
 void controlServo(uint8_t uiAngle)
