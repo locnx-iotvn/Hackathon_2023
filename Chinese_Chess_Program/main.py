@@ -38,12 +38,12 @@ except:
 
 # Main loop
 while True:
-    ret, frame = cap.read()
-    # frame = cv2.imread("test_board.png")
-    if ret is False:
-        print("Check camera connection")
-        input()
-        sys.exit(0)
+    # ret, frame = cap.read()
+    frame = cv2.imread("test_board.png")
+    # if ret is False:
+    #     print("Check camera connection")
+    #     input()
+    #     sys.exit(0)
     if frame is not None:
         original_frame_viz = frame.copy()
         is_cropped, board_image = aligner.process(frame, visualize=original_frame_viz)

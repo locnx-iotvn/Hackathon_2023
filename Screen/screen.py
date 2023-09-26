@@ -96,5 +96,8 @@ def play_Chess():
                 print('Robot is moving....')
                 uart.sendData(result_bestMove)
                 print('The robot has finished moving')
+            elif result_bestMove[0] == '5' :
+                sg.popup('Camera failed')
+                break
     window_PlayChess.close()
 

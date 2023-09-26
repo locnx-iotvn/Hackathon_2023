@@ -5,7 +5,7 @@ import sys
 import cv2
 import imutils
 
-cv2.namedWindow("ChessAI", cv2.WINDOW_NORMAL)
+# cv2.namedWindow("ChessAI", cv2.WINDOW_NORMAL)
 
 sys.path.append(".")
 
@@ -15,28 +15,32 @@ from chessai.piece_detector import PieceDetector
 from chessai.chess_engine import ChessEngine
 from chessai.visualization import draw_board_canvas
 
-global_message = "ChessAI - Development Version"
-aligner = BoardAligner(
-    config.REFERENCE_ARUCO_IMAGE_PATH,
-    debug=True,
-    smooth=False,
-)
-piece_detector = PieceDetector(
-    model_path=config.PIECE_DETECTION_MODEL_PATH,
-    class_names_path=config.PIECE_DETECTION_CLASS_NAMES_PATH,
-)
+
 
 class ChessProgram:
     def chess_engine_get_data():
         chess_status = 0
         move_from = ""
         Move_to = ""
-        chess_engine = ChessEngine("Chess_Engine.exe")
+        chess_engine = ChessEngine("../Chinese_Chess_Program/Chess_Engine.exe")
+
+        global_message = "ChessAI - Development Version"
+        aligner = BoardAligner(
+            config.REFERENCE_ARUCO_IMAGE_PATH,
+            debug=True,
+            smooth=False,
+        )
+        piece_detector = PieceDetector(
+            model_path=config.PIECE_DETECTION_MODEL_PATH,
+            class_names_path=config.PIECE_DETECTION_CLASS_NAMES_PATH,
+        )
 
         # ret, frame = cap.read()
-        frame = cv2.imread("test_board.png")
+        frame = cv2.imread("../Chinese_Chess_Program/test_board.png")
+        # ret = False
         # if ret is False:
         #     print("Check camera connection")
+        #     return "5 0 0"
         #     input()
         #     sys.exit(0)
         if frame is not None:
@@ -45,32 +49,32 @@ class ChessProgram:
             board_image_viz = board_image.copy()
             board_array = piece_detector.detect(board_image, visualize=board_image_viz)
 
-            # Two images on the top
-            target_height = 800
-            original_frame_viz = imutils.resize(original_frame_viz, height=target_height)
-            board_image_viz = imutils.resize(board_image_viz, height=target_height)
-            top_row = cv2.hconcat([board_image_viz, original_frame_viz])
+            # # Two images on the top
+            # target_height = 800
+            # original_frame_viz = imutils.resize(original_frame_viz, height=target_height)
+            # board_image_viz = imutils.resize(board_image_viz, height=target_height)
+            # top_row = cv2.hconcat([board_image_viz, original_frame_viz])
 
-            # Visualize the board
-            board_canvas = draw_board_canvas(board_array)
-            board_canvas = imutils.resize(board_canvas, height=target_height)
+            # # Visualize the board
+            # board_canvas = draw_board_canvas(board_array)
+            # board_canvas = imutils.resize(board_canvas, height=target_height)
 
-            # Draw the message box (bottom right)
-            message_frame = utils.draw_message_box(
-                board_canvas.shape[1], board_canvas.shape[0], global_message
-            )
+            # # Draw the message box (bottom right)
+            # message_frame = utils.draw_message_box(
+            #     board_canvas.shape[1], board_canvas.shape[0], global_message
+            # )
 
-            # Two images on the bottom
-            bottom_row = cv2.hconcat([board_canvas, message_frame])
+            # # Two images on the bottom
+            # bottom_row = cv2.hconcat([board_canvas, message_frame])
 
-            # Combine the two rows
-            bottom_row = imutils.resize(bottom_row, width=top_row.shape[1])
-            viz_image = cv2.vconcat([top_row, bottom_row])
-            viz_image = cv2.copyMakeBorder(
-                viz_image, 0, 0, 200, 200, cv2.BORDER_CONSTANT, None, (0, 0, 0)
-            )
+            # # Combine the two rows
+            # bottom_row = imutils.resize(bottom_row, width=top_row.shape[1])
+            # viz_image = cv2.vconcat([top_row, bottom_row])
+            # viz_image = cv2.copyMakeBorder(
+            #     viz_image, 0, 0, 200, 200, cv2.BORDER_CONSTANT, None, (0, 0, 0)
+            # )
 
-            cv2.imshow("ChessAI", viz_image)
+            # cv2.imshow("ChessAI", viz_image)
 
 
             best_move = chess_engine.get_move(board_array)
@@ -99,10 +103,10 @@ class ChessProgram:
 
         return str(chess_status) + " "+ move_from + " " + Move_to
 
-### Nomal ###
-output = ChessProgram.chess_engine_get_data()
-print(output)
-print("\n")
+# ## Nomal ###
+# output = ChessProgram.chess_engine_get_data()
+# print(output)
+# print("\n")
 
 # output = ChessProgram.chess_engine_get_data("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1")
 

@@ -18,10 +18,10 @@ pieces = [
     "bp",
 ]
 
-ref_board_image = cv2.imread("data/board.png")
+ref_board_image = cv2.imread("../Chinese_Chess_Program/data/board.png")
 ref_piece_images = {}
 for p in pieces:
-    ref_piece_images[p] = cv2.imread(f"data/pieces/{p}.png", cv2.IMREAD_UNCHANGED)
+    ref_piece_images[p] = cv2.imread(f"../Chinese_Chess_Program/data/pieces/{p}.png", cv2.IMREAD_UNCHANGED)
 
 
 def overlay(background, overlay, x, y):

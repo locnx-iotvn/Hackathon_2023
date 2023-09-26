@@ -1,4 +1,7 @@
 import uart
+import sys
+sys.path.append('../Chinese_Chess_Program')
+from Chess_Program import ChessProgram
 
 def Start_Camera():
     return True
@@ -8,5 +11,6 @@ def Start_Arduino():
     return True
 
 def playChess_bestMove():
-    return ("0,a0,b0")
-     
+    output = ChessProgram.chess_engine_get_data()
+    print(output)
+    return (output)

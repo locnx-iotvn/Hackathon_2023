@@ -1,5 +1,5 @@
-REFERENCE_ARUCO_IMAGE_PATH = "data/board_with_aruco.png"
-REFERENCE_BOARD_IMAGE_PATH = "data/board.png"
+REFERENCE_ARUCO_IMAGE_PATH = "../Chinese_Chess_Program/data/board_with_aruco.png"
+REFERENCE_BOARD_IMAGE_PATH = "../Chinese_Chess_Program/data/board.png"
 
 CELL_CENTER_POSITIONS = [
     [[180, 72], [290, 72], [400, 72], [510, 72], [620, 72], [730, 72], [840, 72], [950, 72], [1060, 72]],
@@ -25,5 +25,5 @@ for row in CELL_CENTER_POSITIONS:
         )
 
 
-PIECE_DETECTION_MODEL_PATH = "data/dnn/chessai-det.onnx"
-PIECE_DETECTION_CLASS_NAMES_PATH = "data/dnn/chessai-det.names"
+PIECE_DETECTION_MODEL_PATH = "../Chinese_Chess_Program/data/dnn/chessai-det.onnx"
+PIECE_DETECTION_CLASS_NAMES_PATH = "../Chinese_Chess_Program/data/dnn/chessai-det.names"
