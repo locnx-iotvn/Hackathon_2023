@@ -53,12 +53,12 @@ def play_Chess():
     layout_playChess = [
         [sg.Button('Turn of robot', auto_size_button=False, size=(30, 4), pad=(200, 40), button_color=('white', '#228B22'))],
     ]
-    layout_YouWin = [
-        [sg.Text('You Win', size=(30, 1), justification='center', font=('Arial', 16), text_color='red')],
+    layout_RobotWin = [
+        [sg.Text('Robot Win', size=(30, 1), justification='center', font=('Arial', 16), text_color='red')],
         [sg.Button('OK', size=(10, 2), pad=((135, 0), 5), button_color=('white', '#0078D4'))],
     ]
-    layout_YouLost = [
-        [sg.Text('You Lost', size=(30, 1), justification='center', font=('Arial', 16), text_color='red')],
+    layout_RobotLost = [
+        [sg.Text('Robot Lost', size=(30, 1), justification='center', font=('Arial', 16), text_color='red')],
         [sg.Button('OK', size=(10, 2), pad=((135, 0), 5), button_color=('white', '#0078D4'))],
     ]
     # Tạo cửa sổ giao diện cho lượt robot
@@ -74,18 +74,21 @@ def play_Chess():
             result_bestMove = playChess.playChess_bestMove()
             print("best Move is: " + result_bestMove)
 
-            if result_bestMove[0] == '0':
+            # Robot lost
+            if result_bestMove[0] == '1':
                 window_PlayChess.close()
-                window_YouWin= sg.Window('You win', layout_YouWin, finalize=True)
-                event_YouWin, values_YouWin = window_YouWin.read()
-                if event_YouWin == 'OK':
+                window_RobotWin= sg.Window('Robot win', layout_RobotWin, finalize=True)
+                event_RobotWin, values_RobotWin = window_RobotWin.read()
+                if event_RobotWin == 'OK':
+                    window_RobotWin.close()
                     start_Game()
                 break
-            elif result_bestMove[0] == '1':
+            elif result_bestMove[0] == '0':
                 window_PlayChess.close()
-                window_YouLost= sg.Window('You lost', layout_YouLost, finalize=True)
-                event_YouLost, values_YouLost = window_YouLost.read()
-                if event_YouLost == 'OK':
+                window_RobotLost= sg.Window('Robot lost', layout_RobotLost, finalize=True)
+                event_RobotLost, values_RobotLost = window_RobotLost.read()
+                if event_RobotLost == 'OK':
+                    window_RobotLost.close()
                     start_Game()
                 break
             elif result_bestMove[0] == '2':
