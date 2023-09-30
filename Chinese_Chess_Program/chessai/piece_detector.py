@@ -41,21 +41,23 @@ class PieceDetector:
 
     @staticmethod
     def is_red_piece(image):
+        if image.shape[0] == 0 or image.shape[1] == 0:
+            return False
         img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         # Lower mask (0-10)
-        lower_red = np.array([0, 50, 50])
+        lower_red = np.array([0, 80, 80])
         upper_red = np.array([10, 255, 255])
         mask0 = cv2.inRange(img_hsv, lower_red, upper_red)
 
         # Upper mask (170-180)
-        lower_red = np.array([150, 50, 50])
+        lower_red = np.array([170, 80, 80])
         upper_red = np.array([180, 255, 255])
         mask1 = cv2.inRange(img_hsv, lower_red, upper_red)
 
         mask = mask0 + mask1
         num_red_pixels = np.count_nonzero(mask)
-        return num_red_pixels > 100
+        return num_red_pixels > 200
 
     def detect(self, image, visualize=None):
         # Detect pieces
@@ -70,6 +72,8 @@ class PieceDetector:
                     piece_crop = image[
                         int(box[1]) : int(box[3]), int(box[0]) : int(box[2])
                     ]
+                    if piece_crop.shape[0] == 0 or piece_crop.shape[1] == 0:
+                        continue
                     color = "r" if self.is_red_piece(piece_crop) else "b"
                     board.append(color + self.class_names[int(cls_inds[i])])
                     is_found = True
