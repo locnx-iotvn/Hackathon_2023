@@ -1,3 +1,5 @@
+import math
+
 import cv2
 import numpy as np
 
@@ -8,13 +10,13 @@ class YOLOXObjectDetector:
         model,
         class_names,
         p6=False,
-        conf_threshold=0.5,
-        nms_threshold=0.1,
-        obj_threshold=0.5,
+        conf_threshold=0.3,
+        nms_threshold=0.4,
+        obj_threshold=0.3,
     ):
         self.class_names = class_names
         self.net = cv2.dnn.readNet(model)
-        self.input_size = (1024, 1024)
+        self.input_size = (800, 800)
         if not p6:
             self.strides = [8, 16, 32]
         else:
@@ -132,15 +134,15 @@ class YOLOXObjectDetector:
             x1 = int(box[2])
             y1 = int(box[3])
 
-            text = "{}:{:.1f}%".format(self.class_names[cls_id], score * 100)
+            text = "{}:{}%".format(self.class_names[cls_id], math.ceil(score * 100))
             font = cv2.FONT_HERSHEY_SIMPLEX
-            txt_size = cv2.getTextSize(text, font, 0.4, 1)[0]
+            txt_size = cv2.getTextSize(text, font, 0.9, 1)[0]
             cv2.rectangle(img, (x0, y0), (x1, y1), (0, 0, 255), 2)
             cv2.rectangle(
                 img,
                 (x0, y0 + 1),
                 (x0 + txt_size[0] + 1, y0 + int(1.5 * txt_size[1])),
-                (255, 255, 255),
+                (0, 0, 0),
                 -1,
             )
             cv2.putText(
@@ -148,9 +150,9 @@ class YOLOXObjectDetector:
                 text,
                 (x0, y0 + txt_size[1]),
                 font,
-                0.4,
+                1.0,
                 (0, 255, 0),
-                thickness=1,
+                thickness=2,
             )
 
     @staticmethod

@@ -1,3 +1,4 @@
+mkdir data/combined_data
 cp data/data_01/* data/combined_data/
 cp data/data_02/* data/combined_data/
 python convert_yolox.py data/combined_data data/annotations.json

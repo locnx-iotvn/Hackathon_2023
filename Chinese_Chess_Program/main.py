@@ -3,6 +3,8 @@ import cv2
 import os
 import imutils
 
+cv2.namedWindow("ChessAI", cv2.WINDOW_NORMAL)
+
 sys.path.append(".")
 
 from chessai import config, utils
@@ -22,14 +24,14 @@ piece_detector = PieceDetector(
     class_names_path=config.PIECE_DETECTION_CLASS_NAMES_PATH,
 )
 
-engine_path = os.environ.get("ENGINE_PATH", None)
-if not engine_path:
-    print("ENGINE_PATH environment variable not set")
-    sys.exit(0)
-chess_engine = ChessEngine(engine_path)
+# engine_path = os.environ.get("ENGINE_PATH", None)
+# if not engine_path:
+#     print("ENGINE_PATH environment variable not set")
+#     sys.exit(0)
+chess_engine = ChessEngine("./Chess_Engine.exe")
 
 try:
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 except:
     print("Check camera connection")
     input()
@@ -38,12 +40,12 @@ except:
 
 # Main loop
 while True:
-    # ret, frame = cap.read()
-    frame = cv2.imread("test_board.png")
-    # if ret is False:
-    #     print("Check camera connection")
-    #     input()
-    #     sys.exit(0)
+    ret, frame = cap.read()
+    # frame = cv2.imread("test_board.png")
+    if ret is False:
+        print("Check camera connection")
+        input()
+        sys.exit(0)
     if frame is not None:
         original_frame_viz = frame.copy()
         is_cropped, board_image = aligner.process(frame, visualize=original_frame_viz)

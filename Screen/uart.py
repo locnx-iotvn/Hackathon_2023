@@ -1,7 +1,7 @@
 import serial
 import time
 
-COM_PORT = 'COM10'
+COM_PORT = 'COM3'
 COM_BAUDRATE = 9600
 
 # Thiết lập cổng UART (chú ý đường dẫn tới cổng UART, thường là /dev/ttyUSB0 trên Linux hoặc COMx trên Windows)

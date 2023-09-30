@@ -1,5 +1,5 @@
 {
-  "version": "0.3.3",
+  "version": "0.3.4",
   "flags": {},
   "shapes": [
     {
@@ -222,10 +222,28 @@
       "group_id": null,
       "shape_type": "rectangle",
       "flags": {}
+    },
+    {
+      "label": "vua",
+      "text": "",
+      "points": [
+        [
+          368.0,
+          486.6666666666667
+        ],
+        [
+          521.3333333333334,
+          641.3333333333333
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
     }
   ],
   "imagePath": "0509.jpg",
   "imageData": null,
   "imageHeight": 1280,
-  "imageWidth": 720
+  "imageWidth": 720,
+  "text": ""
 }

@@ -46,12 +46,12 @@ class PieceDetector:
         img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         # Lower mask (0-10)
-        lower_red = np.array([0, 80, 80])
+        lower_red = np.array([0, 30, 50])
         upper_red = np.array([10, 255, 255])
         mask0 = cv2.inRange(img_hsv, lower_red, upper_red)
 
         # Upper mask (170-180)
-        lower_red = np.array([170, 80, 80])
+        lower_red = np.array([170, 30, 50])
         upper_red = np.array([180, 255, 255])
         mask1 = cv2.inRange(img_hsv, lower_red, upper_red)
 
