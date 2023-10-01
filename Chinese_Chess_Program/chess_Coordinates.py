@@ -43,6 +43,34 @@ class ChessCoordinates:
             dataPlayChess = best_move
         return dataPlayChess
     
+    def convertAngle(chess_status, move_from, move_to):
+        global numberChessEat
+        dataPlayChess = ""
+        if chess_status in [1, 2, 3]:
+            dataPlayChess = dataPlayChess + str(chess_status) + ","
+            for i in range(0, NUMBER_POSTION_CHESS):
+                if posstionChess[i] == move_from :
+                        dataPlayChess = dataPlayChess + str(angleMotor[i][0]) + "," + str(angleMotor[i][1]) + ","
+                        break
+                
+            for j in range(0, NUMBER_POSTION_CHESS):
+                if posstionChess[j] == move_to :
+                    # print("i = " + str(i) + " Y = " + str(coordinatesChess[j][0]) + "," + str(coordinatesChess[j][1]))
+                    dataPlayChess = dataPlayChess + str(angleMotor[j][0]) + "," + str(angleMotor[j][1]) + ","
+                    break
+
+            if chess_status == 2:
+                # print("numberChessEat = " + str(numberChessEat) + " XY1 = " + str(coordinatesChessEat[numberChessEat][0]) + "," + str(coordinatesChessEat[numberChessEat][1]))
+                dataPlayChess = dataPlayChess + str(angleChessEat[numberChessEat][0]) + "," + str(angleChessEat[numberChessEat][1])
+                if numberChessEat <= 15:
+                    numberChessEat = numberChessEat + 1
+            elif chess_status in [1, 3]:
+                    dataPlayChess = dataPlayChess + "0,0"
+        else:
+            dataPlayChess = chess_status
+        return dataPlayChess
+
+            
 posstionChess = [
 					"i1", "h1", "g1", "f1", "e1", "d1", "c1", "b1", "a1",
 					"i2", "h2", "g2", "f2", "e2", "d2", "c2", "b2", "a2",
@@ -200,10 +228,10 @@ angleMotor = [
                     [ORIGIN_X - COLUMN_DISTANCE*8, ORIGIN_Y + ROW_DISTANCE],
                     # "i3", "h3", "g3", "f3", "e3", "d3", "c3", "b3", "a3",
                     [ORIGIN_X,  ORIGIN_Y + ROW_DISTANCE*2], 
-                    [ORIGIN_X - COLUMN_DISTANCE*1, ORIGIN_Y + ROW_DISTANCE*2], 
-                    [ORIGIN_X - COLUMN_DISTANCE*2, ORIGIN_Y + ROW_DISTANCE*2], 
+                    [44,-27], 
+                    [54,-29], 
                     [ORIGIN_X - COLUMN_DISTANCE*3, ORIGIN_Y + ROW_DISTANCE*2], 
-                    [ORIGIN_X - COLUMN_DISTANCE*4, ORIGIN_Y + ROW_DISTANCE*2], 
+                    [75,-35], 
                     [ORIGIN_X - COLUMN_DISTANCE*5, ORIGIN_Y + ROW_DISTANCE*2], 
                     [ORIGIN_X - COLUMN_DISTANCE*6, ORIGIN_Y + ROW_DISTANCE*2], 
                     [ORIGIN_X - COLUMN_DISTANCE*7, ORIGIN_Y + ROW_DISTANCE*2], 
@@ -213,7 +241,7 @@ angleMotor = [
                     [ORIGIN_X - COLUMN_DISTANCE*1, ORIGIN_Y + ROW_DISTANCE*3], 
                     [ORIGIN_X - COLUMN_DISTANCE*2, ORIGIN_Y + ROW_DISTANCE*3], 
                     [ORIGIN_X - COLUMN_DISTANCE*3, ORIGIN_Y + ROW_DISTANCE*3], 
-                    [ORIGIN_X - COLUMN_DISTANCE*4, ORIGIN_Y + ROW_DISTANCE*3], 
+                    [76,-44], 
                     [ORIGIN_X - COLUMN_DISTANCE*5, ORIGIN_Y + ROW_DISTANCE*3], 
                     [ORIGIN_X - COLUMN_DISTANCE*6, ORIGIN_Y + ROW_DISTANCE*3], 
                     [ORIGIN_X - COLUMN_DISTANCE*7, ORIGIN_Y + ROW_DISTANCE*3], 
@@ -279,3 +307,21 @@ angleMotor = [
                     [ORIGIN_X - COLUMN_DISTANCE*7, ORIGIN_Y + ROW_DISTANCE*9], 
                     [ORIGIN_X - COLUMN_DISTANCE*8, ORIGIN_Y + ROW_DISTANCE*9],
 				]
+
+angleChessEat = [
+                    [25, -43],
+                    [ORIGIN_X+COLUMN_DISTANCE*3, ORIGIN_Y+ROW_DISTANCE*2],
+                    [ORIGIN_X+COLUMN_DISTANCE*4, ORIGIN_Y+ROW_DISTANCE*2],
+                    [ORIGIN_X+COLUMN_DISTANCE*2, ORIGIN_Y+ROW_DISTANCE*3],
+                    [ORIGIN_X+COLUMN_DISTANCE*3, ORIGIN_Y+ROW_DISTANCE*3],
+                    [ORIGIN_X+COLUMN_DISTANCE*4, ORIGIN_Y+ROW_DISTANCE*3],
+                    [ORIGIN_X+COLUMN_DISTANCE*2, ORIGIN_Y+ROW_DISTANCE*4],
+                    [ORIGIN_X+COLUMN_DISTANCE*3, ORIGIN_Y+ROW_DISTANCE*4],
+                    [ORIGIN_X+COLUMN_DISTANCE*4, ORIGIN_Y+ROW_DISTANCE*4],
+                    [ORIGIN_X+COLUMN_DISTANCE*2, ORIGIN_Y+ROW_DISTANCE*5],
+                    [ORIGIN_X+COLUMN_DISTANCE*3, ORIGIN_Y+ROW_DISTANCE*5],
+                    [ORIGIN_X+COLUMN_DISTANCE*4, ORIGIN_Y+ROW_DISTANCE*5],
+                    [ORIGIN_X+COLUMN_DISTANCE*2, ORIGIN_Y+ROW_DISTANCE*6],
+                    [ORIGIN_X+COLUMN_DISTANCE*3, ORIGIN_Y+ROW_DISTANCE*6],
+                    [ORIGIN_X+COLUMN_DISTANCE*4, ORIGIN_Y+ROW_DISTANCE*6],
+                ]
