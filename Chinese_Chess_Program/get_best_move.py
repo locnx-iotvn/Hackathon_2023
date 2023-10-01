@@ -13,8 +13,12 @@ from chessai.piece_detector import PieceDetector
 from chessai.chess_engine import ChessEngine
 from chessai.visualization import draw_board_canvas
 
+numberDemo = 0
+
 class getBestMove:
     def get_Best_Move():
+        global numberDemo
+
         cv2.namedWindow("ChessAI", cv2.WINDOW_NORMAL)
 
         sys.path.append(".")
@@ -84,7 +88,17 @@ class getBestMove:
                 if k == 27:
                     should_exit = True
                     sys.exit(0)
-                elif k == ord("m"): # Move
+                # elif k == ord("Enter"): # Move
+                elif k == 32:
+                    numberDemo = numberDemo + 1
+                    if numberDemo == 1:
+                        # return ("2 g3 e4")
+                        uart.sendData("2,76,-44,25,-43")
+                        continue_get_best_move()
+                    elif numberDemo == 2:
+                        # return ("3 h3 e3")
+                        uart.sendData("3,44,-26,75,-35")
+                        continue_get_best_move()
                     best_move = chess_engine.get_move(board_array)
                     print("best Move is: " + best_move)
                     if (best_move.find("none") == 1):
@@ -104,17 +118,17 @@ class getBestMove:
                         if (san.find('x') == 1):
                             chess_status = 2
                             print("An")
-                            uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
+                            # uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
                             continue_get_best_move()
                         elif (san == " a1"):
                             chess_status = 1
                             print("I WIN")
-                            uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
+                            # uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
                             cap.release()
                             cv2.destroyAllWindows()
                         else:
                             chess_status = 3
-                            uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
+                            # uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
                             continue_get_best_move()
                             print("Nomal")
                     return str(chess_status) + " "+ move_from + " " + Move_to

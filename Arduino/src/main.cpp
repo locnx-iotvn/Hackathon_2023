@@ -25,8 +25,9 @@ void moveMotor(double theta1_, double theta2_);
 void takeChessPieces();
 void dropChessPieces();
 void controlServo(uint8_t uiAngle);
+void readDataFromUartDemo();
 void playChessDemo();
-void moveChessDemo(double theta1_, double theta2_, double theta3_, double theta4_);
+void moveChessDemo(int statusReset, double theta1_, double theta2_, double theta3_, double theta4_);
 
 void setup() {
   startSetup();
@@ -47,7 +48,7 @@ void loop() {
   // takeChessPieces();
   // delay(1000);
 
-  readDataFromUart();
+  readDataFromUartDemo();
 
   if (bPlayChess == true)
   {
@@ -75,7 +76,7 @@ void startSetup()
 
   // Start servo motor
   myservo.attach(SERVO_PIN);
-
+  controlServo(0);
 
   // Setup pin output for sucking motor
   pinMode(SUCKING_MOTOR_PIN, OUTPUT);
@@ -87,8 +88,7 @@ void startSetup()
   pinMode(LIMIT_SWITCH_X, INPUT_PULLUP);
   pinMode(LIMIT_SWITCH_Y, INPUT_PULLUP);
 
-  // resetPosition();
-  controlServo(0);
+  resetPosition();
 }
 
 void resetPosition() {
@@ -165,6 +165,20 @@ void playChess()
   }
 }
 
+void readDataFromUartDemo()
+{
+  if (Serial.available()) {
+    content = Serial.readString(); // Read the incomding data from Processing
+    // Extract the data from the string and put into separate integer variables (data[] array)
+    for (int i = 0; i < 1; i++) {
+      int index = content.indexOf(","); // locate the first ","
+      dataPlayChess[i] = atol(content.substring(0, index).c_str()); //Extract the number from start to the ","
+      content = content.substring(index + 1); //Remove the number from the string
+    }
+    bPlayChess = true;
+  }
+}
+
 void playChessDemo()
 {
   if (dataPlayChess[0] == 2)
@@ -172,12 +186,12 @@ void playChessDemo()
     Serial.println("Eat and move the chess");
     // Serial.println("Step1: Eatting the chess from(" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ") to (" + String(dataPlayChess[5]) + "," + String(dataPlayChess[6]) + ")");
 
-    moveChessDemo(76,-44,25,-43);
+    moveChessDemo(0,76,-44,25,-43);
     
     delay(200);
 
     // Serial.println("Step2: Moving the chess from (" + String(dataPlayChess[1]) + "," + String(dataPlayChess[2]) + ") to (" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ")");
-    moveChessDemo(53,-27,76,-44);
+    moveChessDemo(1,54,-29,76,-44);
   }
 
   // Move normal
@@ -186,7 +200,7 @@ void playChessDemo()
     Serial.println("Moving the chess");
     // Serial.println("Only moving the chess from (" + String(dataPlayChess[1]) + "," + String(dataPlayChess[2]) + ") to (" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ")");
     // moveChess(dataPlayChess[1], dataPlayChess[2], dataPlayChess[3], dataPlayChess[4]);
-    moveChessDemo(44,-26,75,-35);
+    moveChessDemo(1,44,-27,75,-35);
   }
 }
 
@@ -261,7 +275,7 @@ void moveChessTest()
   }
 }
 
-void moveChessDemo(double theta1_, double theta2_, double theta3_, double theta4_)
+void moveChessDemo(int statusReset, double theta1_, double theta2_, double theta3_, double theta4_)
 {
     // Move motor to the position of chess pieces 
     Serial.println("Step1: Move to the position of chess");
@@ -284,8 +298,12 @@ void moveChessDemo(double theta1_, double theta2_, double theta3_, double theta4
     dropChessPieces();
 
     // Drop the chess pieces
-    Serial.println("Step5: Move to start position");
-    resetPosition();
+    if(statusReset == 1)
+    {
+      Serial.println("Step5: Move to start position");
+      resetPosition();
+    }
+
 }
 
 void caculateRotationAngle(int x, int y) {

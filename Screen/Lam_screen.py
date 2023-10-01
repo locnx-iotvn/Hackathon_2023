@@ -116,14 +116,17 @@ def play_Chess():
                 break
             elif result_bestMove[0] == '2':
                 print('Robot is eating and moving....')
-                uart.sendData(result_bestMove)
+                # uart.sendData(result_bestMove)
+                # uart.sendData("2,76,-44,25,-43")
                 print('The robot has finished moving')
             elif result_bestMove[0] == '3':
                 print('Robot is moving....')
-                uart.sendData(result_bestMove)
+                # uart.sendData(result_bestMove)
+                # uart.sendData("3,44,-26,75,-35")
                 print('The robot has finished moving')
             elif result_bestMove[0] == '5' :
                 sg.popup('Camera failed')
                 break
     window_PlayChess.close()
 
+main()
