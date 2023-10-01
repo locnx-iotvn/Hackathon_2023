@@ -13,29 +13,21 @@ String dataFromUart[NUMBER_DATA_SERIAL];
 int dataPlayChess[7];   // Status, Coordinates_X0, Coordinates_Y0, Coordinates_X1, Coordinates_Y1
 uint8_t numberChessEat = 0;
 
-// Function Common
 void startSetup();
 void resetPosition();
 void readDataFromUart();
+void playChess();
+void moveChess(int Coordinates_X0, int Coordinates_Y0, int Coordinates_X1, int Coordinates_Y1);
+void moveChessTest();
+void moveChessTest2();
+void caculateRotationAngle(int x, int y);
 void moveMotor(double theta1_, double theta2_);
 void takeChessPieces();
 void dropChessPieces();
 void controlServo(uint8_t uiAngle);
-
-// Function when recv UART is Coordinates
-void playChessCoordinates();
-void moveChessCoordinates(int Coordinates_X0, int Coordinates_Y0, int Coordinates_X1, int Coordinates_Y1);
-void caculateRotationAngle(int x, int y);
-
-// Function for demo
+void readDataFromUartDemo();
 void playChessDemo();
-
-// Function when recv UART is Angle
-void playChessAngle();
-void moveChessAngle(int statusReset, double theta1_, double theta2_, double theta3_, double theta4_);
-
-// Function for test Angle
-void moveChessTest();
+void moveChessWithAngle(int statusReset, double theta1_, double theta2_, double theta3_, double theta4_);
 
 void setup() {
   startSetup();
@@ -46,20 +38,17 @@ void loop() {
 
   if (bPlayChess == true)
   {
-    // When demo
-    // playChessDemo();
-
-    // When data recv from Uart is Coordinates
-    // playChessCoordinates();
-
-    // When data recv from Uart is Angle
-    playChessAngle();
-
+    playChessWithAngle();
     bPlayChess = false;
   }
 
-  // When want test take Angle for the Coordinates
-  // moveChessTest();
+  // readDataFromUartDemo();
+
+  // if (bPlayChess == true)
+  // {
+  //   playChessDemo();
+  //   bPlayChess = false;
+  // }
 }
 
 void startSetup()
@@ -146,19 +135,33 @@ void readDataFromUart()
   }
 }
 
-void playChessCoordinates()
+void readDataFromUartDemo()
+{
+  if (Serial.available()) {
+    content = Serial.readString(); // Read the incomding data from Processing
+    // Extract the data from the string and put into separate integer variables (data[] array)
+    for (int i = 0; i < 1; i++) {
+      int index = content.indexOf(","); // locate the first ","
+      dataPlayChess[i] = atol(content.substring(0, index).c_str()); //Extract the number from start to the ","
+      content = content.substring(index + 1); //Remove the number from the string
+    }
+    bPlayChess = true;
+  }
+}
+
+void playChess()
 {
   if (dataPlayChess[0] == 2)
   {
     Serial.println("Eat and move the chess");
     Serial.println("Step1: Eatting the chess from(" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ") to (" + String(dataPlayChess[5]) + "," + String(dataPlayChess[6]) + ")");
 
-    moveChessCoordinates(dataPlayChess[3], dataPlayChess[4], dataPlayChess[5], dataPlayChess[6]);
+    moveChess(dataPlayChess[3], dataPlayChess[4], dataPlayChess[5], dataPlayChess[6]);
     
     delay(200);
 
     Serial.println("Step2: Moving the chess from (" + String(dataPlayChess[1]) + "," + String(dataPlayChess[2]) + ") to (" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ")");
-    moveChessCoordinates(dataPlayChess[1], dataPlayChess[2], dataPlayChess[3], dataPlayChess[4]);
+    moveChess(dataPlayChess[1], dataPlayChess[2], dataPlayChess[3], dataPlayChess[4]);
   }
 
   // Move normal
@@ -166,7 +169,7 @@ void playChessCoordinates()
   {
     Serial.println("Moving the chess");
     Serial.println("Only moving the chess from (" + String(dataPlayChess[1]) + "," + String(dataPlayChess[2]) + ") to (" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ")");
-    moveChessCoordinates(dataPlayChess[1], dataPlayChess[2], dataPlayChess[3], dataPlayChess[4]);
+    moveChess(dataPlayChess[1], dataPlayChess[2], dataPlayChess[3], dataPlayChess[4]);
   }
 }
 
@@ -177,12 +180,12 @@ void playChessDemo()
     Serial.println("Eat and move the chess");
     // Serial.println("Step1: Eatting the chess from(" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ") to (" + String(dataPlayChess[5]) + "," + String(dataPlayChess[6]) + ")");
 
-    moveChessAngle(0,76,-44,25,-43);
+    moveChessWithAngle(0,76,-44,25,-43);
     
     delay(200);
 
     // Serial.println("Step2: Moving the chess from (" + String(dataPlayChess[1]) + "," + String(dataPlayChess[2]) + ") to (" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ")");
-    moveChessAngle(1,54,-29,76,-44);
+    moveChessWithAngle(1,54,-29,76,-44);
   }
 
   // Move normal
@@ -191,23 +194,23 @@ void playChessDemo()
     Serial.println("Moving the chess");
     // Serial.println("Only moving the chess from (" + String(dataPlayChess[1]) + "," + String(dataPlayChess[2]) + ") to (" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ")");
     // moveChess(dataPlayChess[1], dataPlayChess[2], dataPlayChess[3], dataPlayChess[4]);
-    moveChessAngle(1,44,-27,75,-35);
+    moveChessWithAngle(1,44,-27,75,-35);
   }
 }
 
-void playChessAngle()
+void playChessWithAngle()
 {
   if (dataPlayChess[0] == 2)
   {
     Serial.println("Eat and move the chess");
     // Serial.println("Step1: Eatting the chess from(" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ") to (" + String(dataPlayChess[5]) + "," + String(dataPlayChess[6]) + ")");
 
-    moveChessAngle(0,dataPlayChess[3],dataPlayChess[4],dataPlayChess[5],dataPlayChess[6]);
+    moveChessWithAngle(0,dataPlayChess[3],dataPlayChess[4],dataPlayChess[5],dataPlayChess[6]);
     
     delay(200);
 
     // Serial.println("Step2: Moving the chess from (" + String(dataPlayChess[1]) + "," + String(dataPlayChess[2]) + ") to (" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ")");
-    moveChessAngle(1,dataPlayChess[1],dataPlayChess[2],dataPlayChess[3],dataPlayChess[4]);
+    moveChessWithAngle(1,dataPlayChess[1],dataPlayChess[2],dataPlayChess[3],dataPlayChess[4]);
   }
 
   // Move normal or Robot win
@@ -216,11 +219,11 @@ void playChessAngle()
     Serial.println("Moving the chess");
     // Serial.println("Only moving the chess from (" + String(dataPlayChess[1]) + "," + String(dataPlayChess[2]) + ") to (" + String(dataPlayChess[3]) + "," + String(dataPlayChess[4]) + ")");
     // moveChess(dataPlayChess[1], dataPlayChess[2], dataPlayChess[3], dataPlayChess[4]);
-    moveChessAngle(1,dataPlayChess[1],dataPlayChess[2],dataPlayChess[3],dataPlayChess[4]);
+    moveChessWithAngle(1,dataPlayChess[1],dataPlayChess[2],dataPlayChess[3],dataPlayChess[4]);
   }
 }
 
-void moveChessCoordinates(int Coordinates_X0, int Coordinates_Y0, int Coordinates_X1, int Coordinates_Y1)
+void moveChess(int Coordinates_X0, int Coordinates_Y0, int Coordinates_X1, int Coordinates_Y1)
 {
     // Move motor to the position of chess pieces 
     Serial.println("Step1: Move to the position of chess");
@@ -291,7 +294,7 @@ void moveChessTest()
   }
 }
 
-void moveChessAngle(int statusReset, double theta1_, double theta2_, double theta3_, double theta4_)
+void moveChessWithAngle(int statusReset, double theta1_, double theta2_, double theta3_, double theta4_)
 {
     // Move motor to the position of chess pieces 
     Serial.println("Step1: Move to the position of chess");
@@ -353,6 +356,11 @@ void caculateRotationAngle(int x, int y) {
   theta1=round(theta1);
   theta2=round(theta2);
   
+  Serial.print("theta1: "); Serial.println(theta1);
+  Serial.print("theta2: "); Serial.println(theta2);
+}
+
+void convertCoordinatesToAngle(int x, int y) {
   Serial.print("theta1: "); Serial.println(theta1);
   Serial.print("theta2: "); Serial.println(theta2);
 }
