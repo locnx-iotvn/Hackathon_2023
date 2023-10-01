@@ -73,7 +73,6 @@ class ChessEngine:
 
         return fen[:-1] + " w - - 0 1"
 
-    # def get_move(self, fen, time_limit=2000):
     def get_move(self, board_array, time_limit=2000):
         """Returns the best move for the given board array."""
         self.engine_write("uci")

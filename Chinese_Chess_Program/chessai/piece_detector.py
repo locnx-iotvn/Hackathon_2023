@@ -40,24 +40,39 @@ class PieceDetector:
         return intersection / union
 
     @staticmethod
-    def is_red_piece(image):
+    def is_red_piece(image, visualize=False):
         if image.shape[0] == 0 or image.shape[1] == 0:
             return False
         img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-        # Lower mask (0-10)
-        lower_red = np.array([0, 30, 50])
+        lower_red = np.array([0, 50, 50])
         upper_red = np.array([10, 255, 255])
         mask0 = cv2.inRange(img_hsv, lower_red, upper_red)
 
-        # Upper mask (170-180)
-        lower_red = np.array([170, 30, 50])
+        lower_red = np.array([170, 50, 50])
         upper_red = np.array([180, 255, 255])
         mask1 = cv2.inRange(img_hsv, lower_red, upper_red)
 
-        mask = mask0 + mask1
+        lower_red = np.array([114, 34, 116])
+        upper_red = np.array([134, 54, 196])
+        mask2 = cv2.inRange(img_hsv, lower_red, upper_red)
+
+        lower_red = np.array([113, 37, 129])
+        upper_red = np.array([133, 57, 209])
+        mask3 = cv2.inRange(img_hsv, lower_red, upper_red)
+
+        lower_red = np.array([114, 42, 36])
+        upper_red = np.array([163, 82, 196])
+        mask4 = cv2.inRange(img_hsv, lower_red, upper_red)
+
+        mask = mask0 + mask1 + mask2 + mask3 + mask4
         num_red_pixels = np.count_nonzero(mask)
-        return num_red_pixels > 200
+
+        if visualize:
+            cv2.imshow("mask", mask)
+            cv2.waitKey(0)
+
+        return num_red_pixels > 350
 
     def detect(self, image, visualize=None):
         # Detect pieces
@@ -68,7 +83,7 @@ class PieceDetector:
         for rect in CELL_RECTANGLES:
             is_found = False
             for i, box in enumerate(boxes):
-                if self.iou(rect, box) > 0.3:
+                if self.iou(rect, box) > 0.1:
                     piece_crop = image[
                         int(box[1]) : int(box[3]), int(box[0]) : int(box[2])
                     ]
