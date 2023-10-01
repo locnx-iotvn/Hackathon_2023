@@ -1,23 +1,24 @@
 import PySimpleGUI as sg
 import playChess
 import uart
+import time
 
 def main():
     start_Game()
 
 def start_Game():
     # Đường dẫn đến tập tin ảnh
-    image_path = ".\images\start_chess.png"  # Thay bằng đường dẫn đến tập tin ảnh của bạn
+    image_path_start = ".\images\start1.png"  # Thay bằng đường dẫn đến tập tin ảnh của bạn
 
-    # Tạo layout_Start cho giao diện
     layout_Start = [
-        [sg.Text('Robots play Chinese chess', size=(30, 1), justification='center', font=('Arial', 16), text_color='red')],
-        [sg.Image(filename=image_path, key='-IMAGE-')],
-        [sg.Button('Start', size=(10, 2), pad=((135, 0), 5), button_color=('white', '#0078D4'))],
+        [sg.Text('LUCKY TEAM', size=(32, 1), justification='center', font=('Arial', 20), text_color='red')],
+        [sg.Image(filename=image_path_start, key='-IMAGE-', pad=((25, 15), 10))],
+        # [sg.Button('', image_filename=image_path_start, pad=((25, 15), 10), border_width=0, key='-IMAGE_BUTTON-', button_color=('white', sg.theme_background_color()))],
+        [sg.Button('Start', font=('Arial', 20), size=(20, 1), pad=((100, 0), 10), button_color=('white', '#0078D4'))],
     ]
 
     # Tạo cửa sổ giao diện
-    window_Start = sg.Window('Begin game', layout_Start, finalize=True)
+    window_Start = sg.Window('BGSV_Hackathon 2023', layout_Start, finalize=True)
 
     while True:
         event_Start, values_Start = window_Start.read()
@@ -26,7 +27,8 @@ def start_Game():
             break
         elif event_Start == 'Start':
             window_Start.close()
-            start_Robot()
+            # start_Robot()
+            select_level()
     window_Start.close()
 
 
@@ -46,12 +48,41 @@ def start_Robot():
     # Begin screen play chess
     play_Chess()
 
+def select_level():
+    # Tạo layout cho giao diện chọn level
+    levels = ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5']
+
+    layout_level = [
+        [sg.Text('SELECT LEVEL', size=(30, 1), justification='center', font=('Arial', 20, 'bold'), text_color='brown')],
+    ]
+
+    # Tạo nút cho mỗi mức độ
+    for level in levels:
+        layout_level.append([sg.Button(level, size=(20, 2), pad=((120, 0), 5), font=('Arial', 18))])
+
+    # Tạo cửa sổ giao diện chọn level
+    window_level = sg.Window('Select level', layout_level, finalize=True)
+
+    while True:
+        event, values = window_level.read()
+
+        if event == sg.WIN_CLOSED:
+            break
+        elif event in levels:
+            window_level.close()
+            play_Chess()
+            break
+    window_level.close()
+
 
 def play_Chess():
 
+    image_path_play = ".\images\play_chess.png"  # Thay bằng đường dẫn đến tập tin ảnh của bạn
+
     # Tạo layout cho giao diện khi đến lượt robot
     layout_playChess = [
-        [sg.Button('Turn of robot', auto_size_button=False, size=(30, 4), pad=(200, 40), button_color=('white', '#228B22'))],
+        [sg.Image(filename=image_path_play, key='-IMAGE-', pad=((30, 30), 5))],
+        [sg.Button('Play', auto_size_button=False, size=(30, 2), pad=(100, 20), button_color=('white', '#228B22'))],
     ]
     layout_RobotWin = [
         [sg.Text('Robot Win', size=(30, 1), justification='center', font=('Arial', 16), text_color='red')],
@@ -69,13 +100,17 @@ def play_Chess():
 
         if event == sg.WINDOW_CLOSED:
             break
-        elif event == 'Turn of robot':
+        elif event == 'Play':
             print('Robot is moving...')
             result_bestMove = playChess.playChess_bestMove()
             print("best Move is: " + result_bestMove)
 
             # Robot lost
             if result_bestMove[0] == '1':
+                print('Robot is eating and moving....')
+                uart.sendData(result_bestMove)
+                print('The robot has finished moving')
+                time.sleep(2)
                 window_PlayChess.close()
                 window_RobotWin= sg.Window('Robot win', layout_RobotWin, finalize=True)
                 event_RobotWin, values_RobotWin = window_RobotWin.read()
