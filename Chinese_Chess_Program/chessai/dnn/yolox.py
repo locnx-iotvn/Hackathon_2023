@@ -10,9 +10,9 @@ class YOLOXObjectDetector:
         model,
         class_names,
         p6=False,
-        conf_threshold=0.3,
-        nms_threshold=0.4,
-        obj_threshold=0.3,
+        conf_threshold=0.5,
+        nms_threshold=0.5,
+        obj_threshold=0.5,
     ):
         self.class_names = class_names
         self.net = cv2.dnn.readNet(model)
@@ -155,38 +155,6 @@ class YOLOXObjectDetector:
                 thickness=2,
             )
 
-    @staticmethod
-    def iou(box1, box2):
-        # Calculate intersection area
-        x1 = max(box1[0], box2[0])
-        y1 = max(box1[1], box2[1])
-        x2 = min(box1[2], box2[2])
-        y2 = min(box1[3], box2[3])
-        intersection = max(0, x2 - x1) * max(0, y2 - y1)
-
-        # Calculate union area
-        area1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
-        area2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
-        union = area1 + area2 - intersection
-
-        # Calculate IoU
-        return intersection / union
-
-    def nms_all_classes(self, boxes, scores, nms_threshold=0.45):
-        to_be_deleted = []
-        for i in range(len(boxes)):
-            if i in to_be_deleted:
-                continue
-            for j in range(i + 1, len(boxes)):
-                if j in to_be_deleted:
-                    continue
-                if self.iou(boxes[i], boxes[j]) > nms_threshold:
-                    if scores[i] > scores[j]:
-                        to_be_deleted.append(j)
-                    else:
-                        to_be_deleted.append(i)
-        return np.delete(boxes, to_be_deleted, axis=0), np.delete(scores, to_be_deleted)
-
     def detect(self, image, visualize=None):
         image, ratio = self.preprocess(image)
         blob = cv2.dnn.blobFromImage(image)
@@ -212,7 +180,7 @@ class YOLOXObjectDetector:
                 dets[:, 4],
                 dets[:, 5],
             )
-            final_boxes, final_scores = self.nms_all_classes(final_boxes, final_scores, self.nms_threshold)
+            # final_boxes, final_scores = self.nms_all_classes(final_boxes, final_scores, self.nms_threshold)
             if visualize is not None:
                 self.draw_detections(visualize, final_boxes, final_scores, final_cls_inds)
             return final_boxes, final_scores, final_cls_inds
