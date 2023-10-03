@@ -108,6 +108,7 @@ class getBestMove:
                             chess_status = 2
                             print("An")
                             dataUartSend = ChessCoordinates.convertAngle(chess_status,move_from,Move_to)
+                            print("Data Send Uart: " + dataUartSend)
                             uart.sendData(dataUartSend)
                             # uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
                             continue_get_best_move()
@@ -115,13 +116,15 @@ class getBestMove:
                             chess_status = 1
                             print("I WIN")
                             dataUartSend = ChessCoordinates.convertAngle(chess_status,move_from,Move_to)
+                            print("Data Send Uart: " + dataUartSend)
                             uart.sendData(dataUartSend)
                             # uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
                             cap.release()
                             cv2.destroyAllWindows()
                         else:
-                            chess_status = 3
+                            chess_status = 3  
                             dataUartSend = ChessCoordinates.convertAngle(chess_status,move_from,Move_to)
+                            print("Data Send Uart: " + dataUartSend)
                             uart.sendData(dataUartSend)
                             # uart.sendData(str(chess_status) + " "+ move_from + " " + Move_to)
                             continue_get_best_move()
